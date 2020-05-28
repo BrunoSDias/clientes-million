@@ -35,6 +35,7 @@ const ClienteController = {
   },
 
   create: async (req, res, next) => {
+    console.log(req);
     if (req.headers.token === TOKEN) {
       const { nome, sobrenome, cpf, senha, login } = req.body
       try {
@@ -46,6 +47,23 @@ const ClienteController = {
           login
         })
         return res.status(201).send(cliente)
+      } catch (error) {
+        return res.status(401).send(error)
+      }
+    }
+    return res.status(401).json({ error: 'Acesso não autorizado' })
+  },
+
+  login: async (req, res, next) => {
+    if (req.headers.token === TOKEN) {
+      const { senha, login } = req.body
+      try {
+        cliente = await Cliente.findOne({
+          senha: senha,
+          login: login
+        })
+        
+        return res.status(200).send(cliente)
       } catch (error) {
         return res.status(401).send(error)
       }
